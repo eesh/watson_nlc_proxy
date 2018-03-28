@@ -6,6 +6,8 @@ app.use(cors())
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
+let SERVER_PORT = 5000
+
 let NaturalLanguageClassifierV1 = require('watson-developer-cloud/natural-language-classifier/v1');
 
 
@@ -42,4 +44,6 @@ app.post('/classify', function (req, res) {
   });
 })
 
-app.listen(5000)
+app.listen(SERVER_PORT, function() {
+  console.log(`Server running on port ${SERVER_PORT}`)
+})
