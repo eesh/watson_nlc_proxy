@@ -8,10 +8,6 @@ app.use(bodyParser.json())
 
 let NaturalLanguageClassifierV1 = require('watson-developer-cloud/natural-language-classifier/v1');
 
-var naturalLanguageClassifier = new NaturalLanguageClassifierV1({
-  username: '',
-  password: ''
-});
 
 app.post('/classify', function (req, res) {
   if(req.body.auth_pass == null || req.body.auth_user == null) {
