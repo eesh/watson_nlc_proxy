@@ -274,7 +274,7 @@ const controllers = {
         res.json({success: false, message: 'Scratch not connected'});
         return;
       }
-      var socketManager = require('./socketManager');
+      var socketManager = require('../socketManager');
       var result = socketManager.runBlockSet(user.clientID, blockset);
       if(result == null) {
         res.json({success: false, message: 'Invalid blockset'});
