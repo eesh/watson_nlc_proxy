@@ -11,6 +11,10 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
-    "watson-developer-cloud": "^3.2.1"
+    "watson-developer-cloud": "^3.2.1",
+    "express": "^4.16.2",
+    "mongoose": "^4.13.7",
+    "socket.io": "^2.0.4",
+    "whirlpool": "0.0.4"
   }
 }
