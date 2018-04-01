@@ -69,24 +69,19 @@ function classifyImage(req, res) {
 
   if(image_url != null) {
     parameters.url = image_url
-    console.log(image_url);
   } else {
     let resource = parseBase64Image(image_data);
     let temp = path.join(os.tmpdir(), uuid.v1() + '.' + resource.type);
     fs.writeFileSync(temp, resource.data);
     parameters.images_file = fs.createReadStream(temp);
-    console.log(image_data);
   }
 
-  console.log(parameters)
   visual_recognition.classify(parameters, function(err, response) {
-    console.log(api_key)
     if (err) {
       console.log(err);
       res.json(err)
     }
     else {
-      console.log(JSON.stringify(response, null, 2))
       res.json(response)
     }
   });
