@@ -32,6 +32,12 @@ alexa_app.use(bodyParser.json())
 
 alexa_routes(alexa_app)
 
+var options = {
+  ca: fs.readFileSync(config.sslCA),
+  key: fs.readFileSync(config.sslKeyPath),
+  cert: fs.readFileSync(config.sslCertPath)
+}
+
 var alexa_server = require('https').createServer(options, alexa_app);
 socketManager.initialize(alexa_server)
 alexa_server.listen(ALEXA_HTTP_PORT, () => {
