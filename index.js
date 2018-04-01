@@ -1,17 +1,38 @@
-let express = require('express')
-let bodyParser = require('body-parser')
-let cors = require('cors')
-let routes = require('./routes')
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const mongoose = require('mongoose')
+const fs = require('fs')
 
-let app = express()
-app.use(cors())
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
-app.use(bodyParser.json())
+// WATSON SERVER
+let watson_routes = require('./watson_routes')
+let WATSON_SERVER_PORT = 3477
+let watson_app = express()
+watson_app.use(cors())
+watson_app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
+watson_app.use(bodyParser.json())
 
-let SERVER_PORT = 3477
+watson_routes(watson_app)
 
-routes(app)
+watson_app.listen(WATSON_SERVER_PORT, function() {
+  console.log(`Watson server running on port ${SERVER_PORT}`)
+})
 
-app.listen(SERVER_PORT, function() {
-  console.log(`Server running on port ${SERVER_PORT}`)
+
+
+// ALEXA SERVER
+const config = require('./config')
+let ALEXA_HTTP_PORT = 6456
+let alexa_routes = require('./alexa_routes')
+let alexa_app = express()
+alexa_app.use(cors());
+alexa_app.use(bodyParser.urlencoded({ extended : false }))
+alexa_app.use(bodyParser.json())
+
+alexa_routes(alexa_app)
+
+var alexa_server = require('https').createServer(options, alexa_app);
+socketManager.initialize(alexa_server)
+alexa_server.listen(ALEXA_HTTP_PORT, () => {
+  console.log(`Alexa server running on port ${ALEXA_HTTP_PORT}`)
 })
