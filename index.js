@@ -32,13 +32,13 @@ alexa_app.use(bodyParser.json())
 
 alexa_routes(alexa_app)
 
-var options = {
-  ca: fs.readFileSync(config.sslCA),
-  key: fs.readFileSync(config.sslKeyPath),
-  cert: fs.readFileSync(config.sslCertPath)
-}
-
-var alexa_server = require('https').createServer(options, alexa_app);
+// var options = {
+//   ca: fs.readFileSync(config.sslCA),
+//   key: fs.readFileSync(config.sslKeyPath),
+//   cert: fs.readFileSync(config.sslCertPath)
+// }
+mongoose.connect('mongodb://localhost:27017/alexaPC')
+var alexa_server = require('http').createServer(alexa_app);
 socketManager.initialize(alexa_server)
 alexa_server.listen(ALEXA_HTTP_PORT, () => {
   console.log(`Alexa server running on port ${ALEXA_HTTP_PORT}`)
