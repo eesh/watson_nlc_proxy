@@ -1,4 +1,4 @@
-const controllers = require('./controllers')
+const controllers = require('./controllers/alexa')
 
 function init(app) {
   app.post('/attributes/user', controllers.addUserAttribute)
