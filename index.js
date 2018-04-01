@@ -5,7 +5,7 @@ let routes = require('./routes')
 
 let app = express()
 app.use(cors())
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 app.use(bodyParser.json())
 
 let SERVER_PORT = 3477
