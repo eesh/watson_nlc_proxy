@@ -1,5 +1,5 @@
 let nlc = require('./controllers/nlc')
-let visual = require('./controllrs/visual')
+let visual = require('./controllers/visual')
 
 function init(app) {
   app.post('nlc/classify', nlc.classifyPhrase)
