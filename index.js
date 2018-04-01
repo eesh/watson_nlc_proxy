@@ -15,13 +15,14 @@ watson_app.use(bodyParser.json())
 watson_routes(watson_app)
 
 watson_app.listen(WATSON_SERVER_PORT, function() {
-  console.log(`Watson server running on port ${SERVER_PORT}`)
+  console.log(`Watson server running on port ${WATSON_SERVER_PORT}`)
 })
 
 
 
 // ALEXA SERVER
 const config = require('./config')
+const socketManager = require('./socketManager')
 let ALEXA_HTTP_PORT = 6456
 let alexa_routes = require('./alexa_routes')
 let alexa_app = express()
