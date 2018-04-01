@@ -1,6 +1,6 @@
-const User = require('./models/User')
-const AlexaAttribute = require('./models/AlexaAttribute')
-const UserAttribute = require('./models/UserAttribute')
+const User = require('../models/User')
+const AlexaAttribute = require('../models/AlexaAttribute')
+const UserAttribute = require('../models/UserAttribute')
 const Whirlpool = require('whirlpool')
 
 const controllers = {
