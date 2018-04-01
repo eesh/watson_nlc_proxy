@@ -1,20 +1,20 @@
 const controllers = require('./controllers/alexa')
 
 function init(app) {
-  app.post('/attributes/user', controllers.addUserAttribute)
-  app.get('/attributes/user', controllers.getUserAttribute)
-  app.post('/attributes/alexa', controllers.addAlexaAttribute)
-  app.get('/attributes/alexa', controllers.getAlexaAttribute)
+  app.post('/alexa/attributes/user', controllers.addUserAttribute)
+  app.get('/alexa/attributes/user', controllers.getUserAttribute)
+  app.post('/alexa/attributes/alexa', controllers.addAlexaAttribute)
+  app.get('/alexa/attributes/alexa', controllers.getAlexaAttribute)
 
-  app.post('/user/login', controllers.login)
-  app.post('/user/register', controllers.register)
+  app.post('/alexa/user/login', controllers.login)
+  app.post('/alexa/user/register', controllers.register)
 
-  app.post('/messages/user', controllers.addUserMessage)
-  app.get('/messages/user', controllers.getUserMessage)
+  app.post('/alexa/messages/user', controllers.addUserMessage)
+  app.get('/alexa/messages/user', controllers.getUserMessage)
 
-  app.post('/scratch/run', controllers.runScratchBlock)
+  app.post('/alexa/scratch/run', controllers.runScratchBlock)
 
-  app.post('/alexa/login', controllers.alexaLogin)
+  app.post('/alexa/alexa/login', controllers.alexaLogin)
 }
 
 module.exports = init
