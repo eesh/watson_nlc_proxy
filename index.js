@@ -1,10 +1,11 @@
+const fs = require('fs')
 const watson_app = require('./watson_app')
 const alexa_app = require('./alexa_app')
 const config = require('./config')
-const https = requite('https')
+const https = require('https')
 const socketManager = require('./socketManager')
 
-let WATSON_HTTP_PORT = 5000
+let WATSON_HTTP_PORT = 3477
 let ALEXA_HTTP_PORT = 6456
 
 var options = {
