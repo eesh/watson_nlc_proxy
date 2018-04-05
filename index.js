@@ -5,6 +5,7 @@ const https = requite('https')
 const socketManager = require('./socketManager')
 
 let WATSON_HTTP_PORT = 5000
+let ALEXA_HTTP_PORT = 6456
 
 var options = {
   ca: fs.readFileSync(config.sslCA),
