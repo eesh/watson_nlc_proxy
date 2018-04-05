@@ -21,7 +21,9 @@ watson_app.use(bodyParser.json())
 
 watson_routes(watson_app)
 
-watson_app.listen(WATSON_SERVER_PORT, function() {
+let watson_server = require('https').createServer(options, watson_app);
+
+watson_server.listen(WATSON_SERVER_PORT, function() {
   console.log(`Watson server running on port ${WATSON_SERVER_PORT}`)
 })
 
