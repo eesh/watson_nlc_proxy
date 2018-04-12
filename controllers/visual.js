@@ -87,5 +87,75 @@ function classifyImage(req, res) {
   });
 }
 
+function updateClassifier(req, res) {
+  let version_date = req.body.version_date
+  let api_key = req.body.api_key
+  let api_url = req.body.api_url
+
+  let classifier_id = req.body.classifier_id
+  let label = req.body.label
+
+  if(req.files.positive_examples == undefined || req.files.negative_examples == undefined) {
+    res.json({message: 'Required files not specified'})
+    return
+  }
+
+  let positive_examples = req.files.positive_examples.file
+  let negative_examples = req.files.negative_examples.file
+
+
+  if(api_url == null) { // Set default api url
+    api_url = 'https://gateway-a.watsonplatform.net/visual-recognition/api/v3/classify'
+  }
+  if(version_date == null) {
+    res.json({message: 'version_date not specified'})
+    return
+  }
+  if(classifier_id == null) {
+    res.json({message: 'classifier_id not specified'})
+    return
+  }
+  if(label == null) {
+    res.json({message: 'label not specified'})
+    return
+  }
+  if(api_key == null) {
+    res.json({message: 'api_key not specified'})
+    return
+  }
+
+  console.log(positive_examples);
+  console.log(negative_examples);
+
+  let positive_examples_attribute = `${label}_positive_examples`
+
+  let visual_recognition = new VisualRecognitionV3({
+      'url': api_url,
+      'version_date': version_date,
+      'api_key': api_key
+  });
+
+
+  let parameters = {
+    classifier_ids: classifier_id,
+    negative_examples: fs.createReadStream(negative_examples)
+  }
+
+  parameters[positive_examples_attribute] = fs.createReadStream(positive_examples)
+
+  console.log(parameters);
+
+  visual_recognition.updateClassifier(parameters, function(err, response) {
+    if (err) {
+      console.log(err);
+      res.json(err)
+    }
+    else {
+      res.json(response)
+    }
+  });
+}
+
 
 module.exports.classifyImage = classifyImage
+module.exports.updateClassifier = updateClassifier
