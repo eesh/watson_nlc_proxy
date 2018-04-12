@@ -1,7 +1,6 @@
 const fs = require('fs')
 const watson_app = require('./watson_app')
 const alexa_app = require('./alexa_app')
-const config = require('./config')
 const https = require('https')
 const socketManager = require('./socketManager')
 const args = require('minimist')(process.argv.slice(2))
@@ -20,6 +19,9 @@ if(args.http == true) {
   })
 
 } else {
+
+
+  const config = require('./config')
 
   var options = {
     ca: fs.readFileSync(config.sslCA),
