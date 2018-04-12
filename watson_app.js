@@ -12,7 +12,7 @@ watson_app.use(cors())
 watson_app.use(bodyParser.urlencoded({ limit: '50mb', extended: false }))
 watson_app.use(bodyParser.json())
 
-bb.extend(app, {
+bb.extend(watson_app, {
   upload: true
 })
 
