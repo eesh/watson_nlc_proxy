@@ -171,9 +171,17 @@ function updateClassifier(req, res) {
     parameters["negative_examples"] = fs.createReadStream(negative_examples_path)
   }
 
-  console.log(parameters);
-
   visual_recognition.updateClassifier(parameters, function(err, response) {
+    if(positive_examples_path != null) {
+      fs.unlink(positive_examples_path, (err) => {
+        console.log(err);
+      })
+    }
+    if(negative_examples_path != null) {
+      fs.unlink(negative_examples_path, (err) => {
+        console.log(err);
+      })
+    }
     if (err) {
       console.log(err);
       res.json(err)
