@@ -3,6 +3,7 @@ const fs = require('fs')
 const path = require('path');
 const os = require('os');
 const uuid = require('uuid');
+let nodeJsZip = require("nodeJs-zip");
 
 /**
  * Parse a base 64 image and return the extension and buffer
@@ -87,6 +88,12 @@ function classifyImage(req, res) {
   });
 }
 
+
+function random (low, high) {
+    return Math.random() * (high - low) + low;
+}
+
+
 function updateClassifier(req, res) {
   let version_date = req.body.version_date
   let api_key = req.body.api_key
@@ -95,14 +102,15 @@ function updateClassifier(req, res) {
   let classifier_id = req.body.classifier_id
   let label = req.body.label
 
-  if(req.files.positive_examples == undefined || req.files.negative_examples == undefined) {
+  if(req.files.positive_examples == undefined && req.files.negative_examples == undefined) {
     res.json({message: 'Required files not specified'})
     return
   }
 
-  let positive_examples = req.files.positive_examples.file
-  let negative_examples = req.files.negative_examples.file
-
+  let positive_examples = null
+  let negative_examples = null
+  let negative_examples_path = null
+  let positive_examples_path = null
 
   if(api_url == null) { // Set default api url
     api_url = 'https://gateway-a.watsonplatform.net/visual-recognition/api/v3/classify'
@@ -115,7 +123,7 @@ function updateClassifier(req, res) {
     res.json({message: 'classifier_id not specified'})
     return
   }
-  if(label == null) {
+  if(label == null || negative_examples == undefined) {
     res.json({message: 'label not specified'})
     return
   }
@@ -135,13 +143,33 @@ function updateClassifier(req, res) {
       'api_key': api_key
   });
 
-
   let parameters = {
-    classifier_ids: classifier_id,
-    negative_examples: fs.createReadStream(negative_examples)
+    classifier_ids: classifier_id
   }
 
-  parameters[positive_examples_attribute] = fs.createReadStream(positive_examples)
+  if(req.files.positive_examples != undefined) {
+    positive_examples = req.files.positive_examples.file
+    let randomNumber = `${parseInt(random(10000, 99999))}`
+    positive_examples_path = path.join(__dirname, randomNumber, '.zip')
+    nodeJsZip.zip([positive_examples],{
+      name: randomNumber,
+      dir: __dirname,
+      filter: false
+    });
+    parameters[positive_examples_attribute] = fs.createReadStream(positive_examples_path)
+  }
+
+  if(req.files.negative_examples != undefined) {
+    negative_examples = req.files.negative_examples.file
+    let randomNumber = `${parseInt(random(10000, 99999))}`
+    negative_examples_path = path.join(__dirname, randomNumber, '.zip')
+    nodeJsZip.zip([negative_examples],{
+      name: randomNumber,
+      dir: __dirname,
+      filter: false
+    });
+    parameters["negative_examples"] = fs.createReadStream(negative_examples_path)
+  }
 
   console.log(parameters);
 
