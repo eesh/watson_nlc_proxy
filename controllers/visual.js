@@ -102,15 +102,15 @@ function updateClassifier(req, res) {
   let classifier_id = req.body.classifier_id
   let label = req.body.label
 
-  if(req.files.positive_examples == undefined && req.files.negative_examples == undefined) {
+  if(req.body.positive_example == undefined && req.body.negative_example == undefined) {
     res.json({message: 'Required files not specified'})
     return
   }
 
-  let positive_examples = null
-  let negative_examples = null
-  let negative_examples_path = null
-  let positive_examples_path = null
+  let positive_example = null
+  let negative_example = null
+  let negative_example_path = null
+  let positive_example_path = null
 
   if(api_url == null) { // Set default api url
     api_url = 'https://gateway-a.watsonplatform.net/visual-recognition/api/v3/classify'
@@ -123,7 +123,7 @@ function updateClassifier(req, res) {
     res.json({message: 'classifier_id not specified'})
     return
   }
-  if(label == null || negative_examples == undefined) {
+  if(label == null && req.body.negative_example == undefined) {
     res.json({message: 'label not specified'})
     return
   }
@@ -132,64 +132,90 @@ function updateClassifier(req, res) {
     return
   }
 
-  console.log(positive_examples);
-  console.log(negative_examples);
+  let parameters = {
+    classifier_id: classifier_id
+  }
 
   let positive_examples_attribute = `${label}_positive_examples`
-
   let visual_recognition = new VisualRecognitionV3({
       'url': api_url,
       'version_date': version_date,
       'api_key': api_key
   });
 
-  let parameters = {
-    classifier_ids: classifier_id
-  }
+  let zipFile = null
 
-  if(req.files.positive_examples != undefined) {
-    positive_examples = req.files.positive_examples.file
-    let randomNumber = `${parseInt(random(10000, 99999))}`
-    positive_examples_path = path.join(__dirname, randomNumber, '.zip')
-    nodeJsZip.zip([positive_examples],{
-      name: randomNumber,
+  function saveToZip(fileName, filePath) {
+    nodeJsZip.zip([filePath],{
+      name: fileName,
       dir: __dirname,
       filter: false
     });
-    parameters[positive_examples_attribute] = fs.createReadStream(positive_examples_path)
   }
 
-  if(req.files.negative_examples != undefined) {
-    negative_examples = req.files.negative_examples.file
+  function onFileWritten(err) {
+    if(err) {
+      res.json({ error: err.message })
+      return
+    }
+
     let randomNumber = `${parseInt(random(10000, 99999))}`
-    negative_examples_path = path.join(__dirname, randomNumber, '.zip')
-    nodeJsZip.zip([negative_examples],{
-      name: randomNumber,
-      dir: __dirname,
-      filter: false
-    });
-    parameters["negative_examples"] = fs.createReadStream(negative_examples_path)
+    zipFile = path.join(__dirname, randomNumber + '.zip')
+
+    if(positive_example != null) {
+      saveToZip(randomNumber, positive_example)
+      parameters[positive_examples_attribute] = fs.createReadStream(zipFile)
+    } else if (negative_example != null) {
+      saveToZip(randomNumber, negative_example)
+      parameters[positive_examples_attribute] = fs.createReadStream(zipFile)
+    } else {
+      res.json({ error: 'Missing examples' })
+      return
+    }
+
+    update()
   }
 
-  visual_recognition.updateClassifier(parameters, function(err, response) {
-    if(positive_examples_path != null) {
-      fs.unlink(positive_examples_path, (err) => {
+  function update() {
+    visual_recognition.updateClassifier(parameters, function(err, response) {
+      if(zipFile != null) {
+        fs.unlink(zipFile, (err) => {
+          console.log(err);
+        })
+      }
+      if(positive_example != null) {
+        fs.unlink(positive_example, (err) => {
+          console.log(err);
+        })
+      }
+      if(negative_example != null) {
+        fs.unlink(negative_example, (err) => {
+          console.log(err);
+        })
+      }
+      if (err) {
         console.log(err);
-      })
-    }
-    if(negative_examples_path != null) {
-      fs.unlink(negative_examples_path, (err) => {
-        console.log(err);
-      })
-    }
-    if (err) {
-      console.log(err);
-      res.json(err)
-    }
-    else {
-      res.json(response)
-    }
-  });
+        res.json(err)
+      }
+      else {
+        res.json(response)
+      }
+    });
+  }
+
+  if(req.body.positive_example) {
+    let base64Data = req.body.positive_example.replace(/^data:image\/png;base64,/,"")
+    let binaryData = new Buffer(base64Data, 'base64').toString('binary');
+    let randomNumber = `${parseInt(random(10000, 99999))}`
+    positive_example = path.join(__dirname, randomNumber + '.png')
+    fs.writeFile(positive_example, binaryData, "binary", onFileWritten);
+  } else {
+    let base64Data = req.body.negative_example.replace(/^data:image\/png;base64,/,"")
+    let binaryData = new Buffer(base64Data, 'base64').toString('binary');
+    let randomNumber = `${parseInt(random(10000, 99999))}`
+    negative_example = path.join(__dirname, randomNumber + '.png')
+    fs.writeFile(negative_example, binaryData, "binary", onFileWritten);
+  }
 }
 
 
