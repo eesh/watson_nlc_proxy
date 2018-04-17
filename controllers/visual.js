@@ -113,7 +113,7 @@ function updateClassifier(req, res) {
   let positive_example_path = null
 
   if(api_url == null) { // Set default api url
-    api_url = 'https://gateway-a.watsonplatform.net/visual-recognition/api/v3/classify'
+    api_url = 'https://gateway-a.watsonplatform.net/visual-recognition/api'
   }
   if(version_date == null) {
     res.json({message: 'version_date not specified'})
