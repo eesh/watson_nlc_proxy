@@ -178,8 +178,7 @@ function updateClassifier(req, res) {
       return
     }
 
-    res.json({ message: 'ok'})
-    //update()
+    update()
   }
 
   function update() {
