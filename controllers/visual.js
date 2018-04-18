@@ -220,7 +220,6 @@ function updateClassifier(req, res) {
     } else {
       base64Data = req.body.positive_example.replace(/^data:image\/png;base64,/,"")
     }
-    console.log(base64Data)
     let binaryData = new Buffer(base64Data, 'base64').toString('binary');
     let randomNumber = `${parseInt(random(10000, 99999))}`
     positive_example = path.join(__dirname, randomNumber + '.' + imageType)
