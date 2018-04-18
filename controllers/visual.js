@@ -93,6 +93,11 @@ function random (low, high) {
     return Math.random() * (high - low) + low;
 }
 
+function getImageType(data) {
+  if(data.indexOf("jpeg") !== -1 || data.indexOf("jpg") !== -1 ) return 'jpg'
+  else if(data.indexOf("png") !== -1) return 'png'
+  return null
+}
 
 function updateClassifier(req, res) {
   let version_date = req.body.version_date
@@ -173,7 +178,8 @@ function updateClassifier(req, res) {
       return
     }
 
-    update()
+    res.json({ message: 'ok'})
+    //update()
   }
 
   function update() {
@@ -204,16 +210,37 @@ function updateClassifier(req, res) {
   }
 
   if(req.body.positive_example) {
-    let base64Data = req.body.positive_example.replace(/^data:image\/png;base64,/,"")
+    let imageType = getImageType(req.body.positive_example.substr(20))
+    if(imageType == null) {
+      res.json({ error: 'Unsupported image format '})
+      return
+    }
+    let base64Data = null
+    if(imageType == 'jpg') {
+      base64Data = req.body.positive_example.replace(/^data:image\/jpeg;base64,/,"")
+    } else {
+      base64Data = req.body.positive_example.replace(/^data:image\/png;base64,/,"")
+    }
+    console.log(base64Data)
     let binaryData = new Buffer(base64Data, 'base64').toString('binary');
     let randomNumber = `${parseInt(random(10000, 99999))}`
-    positive_example = path.join(__dirname, randomNumber + '.png')
+    positive_example = path.join(__dirname, randomNumber + '.' + imageType)
     fs.writeFile(positive_example, binaryData, "binary", onFileWritten);
   } else {
-    let base64Data = req.body.negative_example.replace(/^data:image\/png;base64,/,"")
+    let imageType = getImageType(req.body.negative_example.substr(20))
+    if(imageType == null) {
+      res.json({ error: 'Unsupported image format '})
+      return
+    }
+    let base64Data = null
+    if(imageType == 'jpg') {
+      base64Data = req.body.negative_example.replace(/^data:image\/jpeg;base64,/,"")
+    } else {
+      base64Data = req.body.negative_example.replace(/^data:image\/png;base64,/,"")
+    }
     let binaryData = new Buffer(base64Data, 'base64').toString('binary');
     let randomNumber = `${parseInt(random(10000, 99999))}`
-    negative_example = path.join(__dirname, randomNumber + '.png')
+    negative_example = path.join(__dirname, randomNumber + '.' + imageType)
     fs.writeFile(negative_example, binaryData, "binary", onFileWritten);
   }
 }
