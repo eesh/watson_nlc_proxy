@@ -189,7 +189,8 @@ function updateClassifier(req, res) {
 
     // pipe archive data to the file
     archive.pipe(output);
-    archive.append(fs.createReadStream(filePath), { name: 'test.png' });
+    var basename = path.parse(filePath).base;
+    archive.append(fs.createReadStream(filePath), { name: basename });
     archive.finalize()
   }
 
