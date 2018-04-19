@@ -4,6 +4,7 @@ const path = require('path');
 const os = require('os');
 const uuid = require('uuid');
 let nodeJsZip = require("nodeJs-zip");
+let archiver = require('archiver')
 
 /**
  * Parse a base 64 image and return the extension and buffer
@@ -151,13 +152,63 @@ function updateClassifier(req, res) {
 
   let zipFile = null
 
-  function saveToZip(fileName, filePath) {
-    nodeJsZip.zip([filePath],{
-      name: fileName,
-      dir: __dirname,
-      filter: false
+  function saveToZip(fileName, filePath, callback) {
+    var output = fs.createWriteStream(fileName);
+    var archive = archiver('zip', {
+      zlib: { level: 1} // Sets the compression level.
     });
+
+    // listen for all archive data to be written
+    // 'close' event is fired only when a file descriptor is involved
+    output.on('close', function() {
+      callback(null, fileName)
+    });
+
+    // This event is fired when the data source is drained no matter what was the data source.
+    // It is not part of this library but rather from the NodeJS Stream API.
+    // @see: https://nodejs.org/api/stream.html#stream_event_end
+    output.on('end', function() {
+      console.log('Data has been drained');
+    });
+
+    // good practice to catch warnings (ie stat failures and other non-blocking errors)
+    archive.on('warning', function(err) {
+      if (err.code === 'ENOENT') {
+        // log warning
+        console.log(err);
+      } else {
+        // throw error
+        callback(err)
+      }
+    });
+
+    // good practice to catch this error explicitly
+    archive.on('error', function(err) {
+      callback(err)
+    });
+
+    // pipe archive data to the file
+    archive.pipe(output);
+    archive.append(fs.createReadStream(filePath), { name: 'test.png' });
+    archive.finalize()
   }
+
+  function onFileZipped(err, path) {
+    if(err != null) {
+      console.log(err);
+      res.json({ error: err.message })
+      return
+    }
+    if(positive_example != null) {
+      parameters[positive_examples_attribute] = fs.createReadStream(path)
+    }
+    if (negative_example != null) {
+      parameters['negative_examples'] = fs.createReadStream(path)
+    }
+
+    update()
+  }
+
 
   function onFileWritten(err) {
     if(err) {
@@ -169,17 +220,15 @@ function updateClassifier(req, res) {
     zipFile = path.join(__dirname, randomNumber + '.zip')
 
     if(positive_example != null) {
-      saveToZip(randomNumber, positive_example)
-      parameters[positive_examples_attribute] = fs.createReadStream(zipFile)
+      saveToZip(zipFile, positive_example, onFileZipped)
+      // parameters[positive_examples_attribute] = fs.createReadStream(zipFile)
     } else if (negative_example != null) {
-      saveToZip(randomNumber, negative_example)
-      parameters[positive_examples_attribute] = fs.createReadStream(zipFile)
+      saveToZip(zipFile, negative_example, onFileZipped)
+      // parameters['negative_examples'] = fs.createReadStream(zipFile)
     } else {
       res.json({ error: 'Missing examples' })
       return
     }
-
-    update()
   }
 
   function update() {
