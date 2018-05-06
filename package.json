@@ -11,6 +11,8 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
+    "dotenv": "^5.0.1",
+    "twitter": "^1.7.1",
     "watson-developer-cloud": "^3.2.1"
   }
 }
