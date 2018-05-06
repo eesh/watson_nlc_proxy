@@ -20,9 +20,7 @@ function call(req, res){
         client.get(uri, {screen_name:user, count:1}, 
                 function(err, tweet, response){
                     if(err){console.log(err)}
-                    output = res.json(tweet[0].text);
-                    console.log(tweet[0].text);
-                    return output;
+                    res.json(tweet[0].text);
             });
     } else{
         var q = req.body.category;
@@ -30,9 +28,7 @@ function call(req, res){
         client.get(uri, {q: q, result_type: result_type, count:1}, 
                 function(err, tweet, response){
                     if(err){console.log(err)}
-                    output = res.json(tweet.statuses[0].text);
-                    console.log(tweet.statuses[0].text);
-                    return output;
+                    res.json(tweet.statuses[0].text);
             });
     }
 }
