@@ -23,8 +23,8 @@ function call(req, res){
                     res.json(tweet[0].text);
             });
     } else{
-        var q = req.body.category;
-        var result_type = req.body.hashtag;
+        var q = req.body.hashtag;
+        var result_type = req.body.category;
         client.get(uri, {q: q, result_type: result_type, count:1}, 
                 function(err, tweet, response){
                     if(err){console.log(err)}
