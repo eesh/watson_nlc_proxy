@@ -2,6 +2,7 @@ const fs = require('fs')
 const watson_app = require('./watson_app')
 const alexa_app = require('./alexa_app')
 const twitter_app = require('./twitter_app')
+const wemo_app = require('./wemo_app')
 const https = require('https')
 const socketManager = require('./socketManager')
 const args = require('minimist')(process.argv.slice(2))
@@ -9,6 +10,7 @@ const args = require('minimist')(process.argv.slice(2))
 let WATSON_HTTP_PORT = 3477
 let ALEXA_HTTP_PORT = 6456
 let TWITTER_HTTP_PORT = 3276
+let WEMO_HTTP_PORT = 4234
 
 
 if(args.http == true) {
@@ -21,9 +23,12 @@ if(args.http == true) {
     console.log(`Alexa server running on port ${ALEXA_HTTP_PORT}`)
   })
 
-
   twitter_app.listen(TWITTER_HTTP_PORT, () => {
     console.log(`Twitter server running on port ${TWITTER_HTTP_PORT}`)
+  })
+
+  wemo_app.listen(WEMO_HTTP_PORT, () => {
+    console.log(`Wemo server running on port ${WEMO_HTTP_PORT}`)
   })
 } else {
 
@@ -50,5 +55,10 @@ if(args.http == true) {
   var twitter_server = require('https').createServer(options, twitter_app);
   twitter_server.listen(TWITTER_HTTP_PORT, () => {
     console.log(`Twitter server running on port ${TWITTER_HTTP_PORT}`)
+  })
+
+  var wemo_server = require('https').createServer(options, wemo_app);
+  wemo_server.listen(WEMO_HTTP_PORT, () => {
+    console.log(`Wemo server running on port ${WEMO_HTTP_PORT}`)
   })
 }

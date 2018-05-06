@@ -21,6 +21,7 @@
     "socket.io": "^2.0.4",
     "twitter": "^1.7.1",
     "watson-developer-cloud": "^3.2.1",
+    "wemo-client": "^0.15.0",
     "whirlpool": "0.0.4"
   }
 }
