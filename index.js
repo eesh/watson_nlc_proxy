@@ -46,16 +46,18 @@ if(args.http == true) {
     console.log(`Watson server running on port ${WATSON_HTTP_PORT}`)
   })
 
+  var twitter_server = require('https').createServer(options, twitter_app);
+  twitter_server.listen(TWITTER_HTTP_PORT, () => {
+    console.log(`Twitter server running on port ${TWITTER_HTTP_PORT}`)
+  })
+
   var alexa_server = require('https').createServer(options, alexa_app);
   socketManager.initialize(alexa_server)
   alexa_server.listen(ALEXA_HTTP_PORT, () => {
     console.log(`Alexa server running on port ${ALEXA_HTTP_PORT}`)
   })
 
-  var twitter_server = require('https').createServer(options, twitter_app);
-  twitter_server.listen(TWITTER_HTTP_PORT, () => {
-    console.log(`Twitter server running on port ${TWITTER_HTTP_PORT}`)
-  })
+
 
   var wemo_server = require('https').createServer(options, wemo_app);
   wemo_server.listen(WEMO_HTTP_PORT, () => {
