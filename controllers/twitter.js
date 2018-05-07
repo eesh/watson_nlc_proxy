@@ -20,20 +20,32 @@ function call(req, res){
         client.get(uri, {screen_name:user, count:1},
                 function(err, tweet, response){
                     if(err){console.log(err)}
+                    console.log(tweet);
+                    if(tweet.error) { 
+                        res.json('error: invalid user');
+                        return 
+                    }
                     res.json(tweet[0].text);
+                    return
             });
-    } else{
+    } 
+    else if(req.body.hashtag && req.body.category){
         var q = req.body.hashtag;
         var result_type = req.body.category;
         client.get(uri, {q: q, result_type: result_type, count:1},
                 function(err, tweet, response){
                     if(err){console.log(err)}
-                    if(tweet == undefined) { 
-                        res.json({text: 'error'})
+                    if(tweet.error) { 
+                        res.json('error: invalid hashtag');
                         return 
                     }
                     res.json(tweet.statuses[0].text);
+                    return
             });
+    }
+    else{
+        res.json('missing parameters');
+        return
     }
 }
 
