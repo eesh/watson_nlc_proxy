@@ -28,6 +28,10 @@ function call(req, res){
         client.get(uri, {q: q, result_type: result_type, count:1},
                 function(err, tweet, response){
                     if(err){console.log(err)}
+                    if(tweet == undefined) { 
+                        res.json({text: 'error'})
+                        return 
+                    }
                     res.json(tweet.statuses[0].text);
             });
     }
