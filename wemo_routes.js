@@ -39,7 +39,7 @@ function deviceDiscovered(info) {
 }
 
 function init(app) {
-  app.get('wemo/search', function (req, res) {
+  app.get('/wemo/search', function (req, res) {
     if(devices.length == 0) {
       console.log("No devices found");
       return;
@@ -48,7 +48,7 @@ function init(app) {
     }
   });
 
-  app.get('wemo/connect/:index', function (req, res) {
+  app.get('/wemo/connect/:index', function (req, res) {
     var index = req.params.index;
     console.log(index);
     if(index >= 0 && index < devices.length) {
@@ -58,7 +58,7 @@ function init(app) {
     }
   });
 
-  app.get('wemo/on', function (req, res) {
+  app.get('/wemo/on', function (req, res) {
     if(client == undefined) {
       console.log("No client set");
       return;
@@ -68,7 +68,7 @@ function init(app) {
     }
   });
 
-  app.get('wemo/off', function (req, res) {
+  app.get('/wemo/off', function (req, res) {
     if(client == undefined) {
       console.log("No client set");
       return;
