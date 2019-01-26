@@ -25,8 +25,13 @@ function call(req, res){
                         res.json('error: invalid user');
                         return 
                     }
-                    res.json(tweet[0].text);
-                    return
+                    message = tweet[0]
+                    if(message){
+                        res.json(tweet[0].text);
+                        return
+                    } else{
+                        res.json('error: user has no tweets')
+                    }
             });
     } 
     else if(req.body.hashtag && req.body.category){
@@ -39,8 +44,13 @@ function call(req, res){
                         res.json('error: invalid hashtag');
                         return 
                     }
-                    res.json(tweet.statuses[0].text);
-                    return
+                    message = tweet.statuses[0]
+                    if(message){
+                        res.json(tweet.statuses[0].text);
+                        return;
+                    } else{
+                        res.json('error: no tweets found');
+                    }
             });
     }
     else{
